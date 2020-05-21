@@ -1,108 +1,18 @@
-<!-- This is intended to be a sandbox file for testing and debugging Hex values of commands send to the Droid. Clearly not production grade code... -->
-
 <html>
 
 <body>
     <button id="ble">Pair with Droid</button>
     <br />
-    <input id="hex" placeholder="Hex instruction"><button id="send">Send instruction</button>
-    <script>
-
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        var writeC;
-        const serviceUuid = '09b600A0-3e42-41fc-b474-e9c0c8f0c801';
-        const notificationUuid = '09b600b0-3e42-41fc-b474-e9c0c8f0c801';
-        const writeUuid = '09b600b1-3e42-41fc-b474-e9c0c8f0c801';
-
-
-        const fromHexString = hexString =>
-            new Uint8Array(hexString.replace(/\s+/g, '').match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-
-
-        document.getElementById('ble').addEventListener('click', function () {
-
-            navigator.bluetooth.requestDevice({
-                optionalServices: [serviceUuid],
-                filters: [{
-                    name: 'DROID'
-                }]
-            })
-                .then(device => {
-                    console.log('Connecting to GATT Service...');
-                    return device.gatt.connect()
-                })
-                .then(droid => {
-                    console.log('Getting Droid...');
-                    return droid.getPrimaryService(serviceUuid);
-                })
-                .then(service => {
-                    console.log('Getting Characteristics...');
-
-                    return service.getCharacteristics();
-
-
-                })
-                .then(characteristics => {
-                    characteristics.forEach(c => {
-                        if (c.uuid === notificationUuid) {
-                            return handleNotificationCharacteristic(c);
-                        } else if (c.uuid === writeUuid) {
-                            writeC = c;
-                            return initialWrites();
-
-                        }
-
-                    });
-
-                })
-                .catch(error => {
-                    console.log('Argh! ' + error);
-                });
-        });
-
-
-        async function initialWrites() {
-            await writeC.writeValue(fromHexString('222001'));
-            await sleep(500);
-            await writeC.writeValue(fromHexString('222001'));
-            await sleep(500);
-            await writeC.writeValue(fromHexString('222001'));
-            await sleep(500);
-            await writeC.writeValue(fromHexString('222001'));
-            await sleep(500);
-            await writeC.writeValue(fromHexString('27420f4444001f00'));
-            await sleep(10);
-            await writeC.writeValue(fromHexString('27420f4444001802'));
-            await sleep(500);
-            await writeC.writeValue(fromHexString('27420f4444001f00'));
-            await sleep(10);
-            await writeC.writeValue(fromHexString('27420f4444001802'));
-            await sleep(1000);
-            return writeC;
-        }
-        async function handleNotificationCharacteristic(c) {
-            c = await c.startNotifications();
-            return c.addEventListener('characteristicvaluechanged',
-                handleCharacteristicValueChanged);
-        }
-
-        function handleCharacteristicValueChanged(event) {
-            var value = event.target.value;
-            console.log('Received ' + JSON.stringify(value));
-        }
-
-
-        document.getElementById('send').addEventListener('click', function () {
-            const hex = document.getElementById('hex').value;
-
-            writeC.writeValue(fromHexString(hex)).then(console.log).catch(console.log);
-        });
-
-
-    </script>
+    <input id="hex" placeholder="Hex instruction">
+    <button id="send">Send instruction</button>
+    <br />
+    <button id="forward">forward</button>
+    <br />
+    <button id="back">back</button>
+    <br />
+    <button id="head">head</button>
+    <script type="text/javascript" src="droid-movement.js"></script>
+    <script type="text/javascript" src="droid-bt-connect.js"></script>
 </body>
 
 </html>
