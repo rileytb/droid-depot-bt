@@ -129,7 +129,6 @@ var interval = null;
 async function droidCommands() {
   getSoundTimeout();
   playRandomSound();
-  setProgressBarState();
 
   if (interval) {
     window.clearInterval(interval);
@@ -139,9 +138,11 @@ async function droidCommands() {
     window.clearInterval(progressLightInterval);
   }
 
+  setProgressBarState();
+
   interval = window.setInterval(() => {
     playRandomSound();
-    window.clearInterval(progressLightInterval);
+    setProgressBarState();
   }, soundWaitTime * 1000);
 }
 
@@ -154,16 +155,31 @@ document
 var activeLightIndex = -1;
 var progressLightInterval;
 function setProgressBarState() {
+  clearProgressBarState();
   var lights = document.getElementsByClassName('progress-light');
-  incrementLight(lights);
+  incrementLight();
 
   progressLightInterval = window.setInterval(() => {
-    incrementLight(lights);
-  }, (soundWaitTime * 1000) / lights.length);
+    incrementLight();
+  }, (soundWaitTime * 1000) / lights.length); //should be -1?
 }
 
-function incrementLight(list) {
-  debugger;
+function clearProgressBarState() {
+  var lights = document.getElementsByClassName('progress-light');
+
+  window.clearInterval(progressLightInterval);
+  activeLightIndex = -1;
+
+  for (let light of lights) {
+    light.classList.remove('progress-light-active');
+  }
+}
+
+function incrementLight() {
+  var lights = document.getElementsByClassName('progress-light');
+
   activeLightIndex++;
-  list[activeLightIndex].classList.add('progress-light-active');
+  if (lights[activeLightIndex]) {
+    lights[activeLightIndex].classList.add('progress-light-active');
+  }
 }

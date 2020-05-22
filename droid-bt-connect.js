@@ -108,9 +108,9 @@ function progressStep() {
 function clearProgress() {
   currentStep = -1;
   var list = document.getElementsByClassName('status-light');
-  for (let index = 0; index < list.length; index++) {
-    const element = list[index];
-    element.classList.remove('status-light-active');
+
+  for (let light of list) {
+    light.classList.remove('status-light-active');
   }
 }
 
