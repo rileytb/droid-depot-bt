@@ -1,17 +1,48 @@
 <html>
 
-<body>
-    <button id="ble">Pair with Droid</button>
-    <br />
-    <input id="hex" placeholder="Hex instruction">
-    <button id="send">Send instruction</button>
-    <br />
+<head>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body id="page">
+    <!-- <input id="hex" placeholder="Hex instruction"> -->
+    <div class="status-light-container">
+        <div class="status-light"></div>
+        <div class="status-light"></div>
+        <div class="status-light"></div>
+        <div class="status-light"></div>
+        <div class="status-light"></div>
+        <div class="status-light"></div>
+        <button id="connect-button">PAIR</button>
+    </div>
+
+    <div id="error-text"></div>
+
+    <div id="command-container">
+        <div class="progress-light-container">
+            <div class="progress-light"></div>
+            <div class="progress-light"></div>
+            <div class="progress-light"></div>
+            <div class="progress-light"></div>
+            <div class="progress-light"></div>
+            <div class="progress-light"></div>
+        </div>
+    
+        <div class="input-container">
+            Send command every: <input id="timeout-input" type="number" min="5" value="15" /> seconds
+            <br />
+            <br />
+            <button id="initiate-button">INITIATE</button>
+        </div>
+    </div>
+    
+    <!-- <br />
     <button id="forward">forward</button>
     <br />
     <button id="back">back</button>
     <br />
-    <button id="head">head</button>
-    <script type="text/javascript" src="droid-movement.js"></script>
+    <button id="head">head</button> -->
+    <script type="text/javascript" src="droid-instructions.js"></script>
     <script type="text/javascript" src="droid-bt-connect.js"></script>
 </body>
 

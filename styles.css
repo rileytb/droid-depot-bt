@@ -1,0 +1,112 @@
+*:focus {
+  outline: none;
+}
+
+#page {
+  background-color: #2d2b2f;
+  padding: 40px;
+}
+
+#connect-button {
+  background-color: #00673f;
+  border: none;
+  padding: 20px;
+  border-radius: 68px;
+  font-size: 28px;
+  font-weight: bold;
+  color: white;
+  margin-left: 24px;
+}
+
+#initiate-button {
+  font-weight: bold;
+  font-size: 32px;
+  background-color: #d69f10;
+  color: black;
+  border-radius: 40px;
+  padding: 20px;
+  border: none;
+}
+
+#command-container {
+  display: flex;
+  margin: 20px;
+}
+
+.input-container {
+  background-color: white;
+  width: 300px;
+  padding: 20px;
+  font-weight: 400;
+}
+
+#timeout-input {
+  width: 40px;
+}
+
+.status-light-container {
+  display: flex;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.status-light {
+  border: 2px solid #211203;
+  height: 60px;
+  width: 60px;
+  margin: 0 2px;
+  background-color: white;
+  animation: colorPulse 4s ease alternate infinite;
+}
+
+/* pulse only the latest one */
+.status-light-active {
+  background-color: red;
+  border-color: red;
+  /* animation-delay: var(--animation-time); */
+}
+
+#error-text {
+  height: 24px;
+  padding: 4px;
+  background: white;
+  color: red;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.progress-light-container {
+  display: flex;
+  flex-direction: column;
+  margin: 0 20px;
+  align-items: center;
+}
+
+.progress-light {
+  height: 40px;
+  width: 220px;
+  border-radius: 20px;
+  margin: 4px 0;
+  background-color: white;
+  /* animation: colorPulse 4s ease alternate infinite; */
+}
+
+.progress-light-active {
+  background-color: green;
+}
+
+@keyframes colorPulse {
+  0% {
+    opacity: 100%;
+  }
+  50% {
+    opacity: 60%;
+  }
+  100% {
+    opacity: 100%;
+  }
+}
+
+:root {
+  --animation-time: 2s;
+}

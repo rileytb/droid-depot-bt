@@ -66,13 +66,14 @@ function pulseMotor(motor, length, direction) {
 
 // basic movement functions
 function rotateLeft() {
-  return pulseMotor(motorRight, 200, directionBackward);
+  return pulseMotor(motorRight, 200, directionForward);
 }
 
 function rotateRight() {
-  return pulseMotor(motorLeft, 200, directionBackward);
+  return pulseMotor(motorLeft, 200, directionForward);
 }
 
+//todo figure out the head motor commands
 function rotateHeadLeft() {
   return pulseMotor(motorHead);
 }
@@ -100,72 +101,69 @@ function back() {
 }
 
 async function stop() {
-//     // return jo(this, void 0, void 0, (function* () {
-//     //     yield this.sendMovement(0, 0, "00"),
-//     //         yield zo(10),
-//     //         yield this.sendMovement(1, 0, "00"),
-//     //         yield zo(10),
-//     //         yield this.sendMovement(2, 0, "00"),
-//     //         yield zo(10)
-//     // }
-//     // ))
-
-//     this.sendMovement(motorRight, directionForward, powerStop).then(() => {
-//         await sleep(10);
-//         this.sendMovement(motorLeft, directionForward, powerStop).then(() => {
-//             await sleep(10);
-//             this.sendMovement(motorHead, directionForward, powerStop);
-//         });
-
-//     });
-
+  //     // return jo(this, void 0, void 0, (function* () {
+  //     //     yield this.sendMovement(0, 0, "00"),
+  //     //         yield zo(10),
+  //     //         yield this.sendMovement(1, 0, "00"),
+  //     //         yield zo(10),
+  //     //         yield this.sendMovement(2, 0, "00"),
+  //     //         yield zo(10)
+  //     // }
+  //     // ))
+  //     this.sendMovement(motorRight, directionForward, powerStop).then(() => {
+  //         await sleep(10);
+  //         this.sendMovement(motorLeft, directionForward, powerStop).then(() => {
+  //             await sleep(10);
+  //             this.sendMovement(motorHead, directionForward, powerStop);
+  //         });
+  //     });
 }
 
-// const hex = document.getElementById('hex').value;
-// writeC.writeValue(fromHexString(hex)).then(console.log).catch(console.log);
-var interval;
+var soundWaitTime = 15;
+function getSoundTimeout() {
+  var count = document.getElementById('timeout-input').value;
+  soundWaitTime = count;
+}
 
+var interval = null;
 async function droidCommands() {
-  // if(interval) {
-  //   window.clearInterval(interval);
-  // }
+  getSoundTimeout();
+  playRandomSound();
+  setProgressBarState();
 
-  await playRandomSound().catch((e) => {console.log(e)})
-  // await rotateHeadRight().catch((e) => {console.log(e)})
-  // await rotateHeadLeft().catch((e) => {console.log(e)})
-  await rotateLeft()
-  await rotateRight()
-  // interval = window.setInterval(() => {
-  //   await playRandomSound()
-  //   await rotateHeadRight()
-  //   await rotateHeadLeft()
-  // }, 10000)
+  if (interval) {
+    window.clearInterval(interval);
+  }
+
+  if (progressLightInterval) {
+    window.clearInterval(progressLightInterval);
+  }
+
+  interval = window.setInterval(() => {
+    playRandomSound();
+    window.clearInterval(progressLightInterval);
+  }, soundWaitTime * 1000);
 }
 
-document.getElementById('send').addEventListener('click', function () {
-  // rotateHeadLeft().then(() => {
-  //   window.setTimeout(() => {
-  //     rotateHeadRight();
-  //   }, 500);
-  //   playRandomSound();
-  // });
-  // playRandomSound().then(() => {
-  //   rotateHeadRight().then(()=> {
-  //     rotateHeadLeft();
-  //   })
-  // })
-  droidCommands()
+document
+  .getElementById('initiate-button')
+  .addEventListener('click', function () {
+    droidCommands();
+  });
 
+var activeLightIndex = -1;
+var progressLightInterval;
+function setProgressBarState() {
+  var lights = document.getElementsByClassName('progress-light');
+  incrementLight(lights);
 
+  progressLightInterval = window.setInterval(() => {
+    incrementLight(lights);
+  }, (soundWaitTime * 1000) / lights.length);
+}
 
-  // rotateHeadRight()
-  // rotateHeadLeft()
-  // rotateHeadLeft().then(() => {
-  //   rotateHeadRight();
-
-  // });
-
-  // rotateLeft().then(() => {
-  //   rotateRight();
-  // });
-});
+function incrementLight(list) {
+  debugger;
+  activeLightIndex++;
+  list[activeLightIndex].classList.add('progress-light-active');
+}
