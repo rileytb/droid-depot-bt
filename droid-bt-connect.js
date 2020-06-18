@@ -60,21 +60,21 @@ document.getElementById('connect-button').addEventListener('click', function () 
 
 async function initialWrites() {
   await writeC.writeValue(fromHexString('222001'));
-  await sleep(500);
+  await sleep(1500);
   await writeC.writeValue(fromHexString('222001'));
-  await sleep(500);
+  await sleep(1500);
   await writeC.writeValue(fromHexString('222001'));
-  await sleep(500);
+  await sleep(1500);
   await writeC.writeValue(fromHexString('222001'));
-  await sleep(500);
+  await sleep(1500);
   await writeC.writeValue(fromHexString('27420f4444001f00'));
-  await sleep(500);
+  await sleep(1500);
   await writeC.writeValue(fromHexString('27420f4444001802'));
-  await sleep(500);
+  await sleep(1500);
   await writeC.writeValue(fromHexString('27420f4444001f00'));
-  await sleep(500);
+  await sleep(1500);
   await writeC.writeValue(fromHexString('27420f4444001802'));
-  await sleep(1000);
+  await sleep(2000);
   return writeC;
 }
 async function handleNotificationCharacteristic(c) {
