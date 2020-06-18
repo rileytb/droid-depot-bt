@@ -46,8 +46,25 @@ document.getElementById('connect-button').addEventListener('click', function () 
         if (c.uuid === notificationUuid) {
           return handleNotificationCharacteristic(c);
         } else if (c.uuid === writeUuid) {
-          writeC = c;
-          return initialWrites().catch(error => console.log(error));
+          // writeC = c;
+          await c.writeValue(fromHexString('222001'));
+          await sleep(500);
+          await c.writeValue(fromHexString('222001'));
+          await sleep(500);
+          await c.writeValue(fromHexString('222001'));
+          await sleep(500);
+          await c.writeValue(fromHexString('222001'));
+          await sleep(500);
+          await c.writeValue(fromHexString('27420f4444001f00'));
+          await sleep(500);
+          await c.writeValue(fromHexString('27420f4444001802'));
+          await sleep(500);
+          await c.writeValue(fromHexString('27420f4444001f00'));
+          await sleep(500);
+          await c.writeValue(fromHexString('27420f4444001802'));
+          await sleep(1000);
+          return writeC;
+          // return initialWrites().catch(error => console.log(error));
         }
       });
     })
@@ -77,6 +94,7 @@ async function initialWrites() {
   await sleep(1000);
   return writeC;
 }
+
 async function handleNotificationCharacteristic(c) {
   c = await c.startNotifications();
   return c.addEventListener(
