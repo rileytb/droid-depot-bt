@@ -59,6 +59,7 @@ document.getElementById('connect-button').addEventListener('click', function () 
 });
 
 async function initialWrites() {
+  await sleep(1500);
   await writeC.writeValue(fromHexString('222001'));
   await sleep(1500);
   await writeC.writeValue(fromHexString('222001'));
