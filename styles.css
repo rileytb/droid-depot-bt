@@ -112,7 +112,7 @@
   }
   50% {
     /* opacity: 60%; */
-    background-color: yellow;
+    background-color: yellow; 
   }
   100% {
     /* opacity: 100%; */
