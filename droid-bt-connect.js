@@ -47,7 +47,7 @@ document.getElementById('connect-button').addEventListener('click', function () 
           return handleNotificationCharacteristic(c);
         } else if (c.uuid === writeUuid) {
           writeC = c;
-          return initialWrites();
+          return initialWrites().catch(error => console.log(error));
         }
       });
     })
