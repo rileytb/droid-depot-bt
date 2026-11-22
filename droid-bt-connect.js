@@ -16,68 +16,86 @@ const fromHexString = (hexString) =>
       .map((byte) => parseInt(byte, 16))
   );
 
-document.getElementById('connect-button').addEventListener('click', function () {
-  navigator.bluetooth
-    .requestDevice({
-      optionalServices: [serviceUuid],
-      filters: [
-        {
-          name: 'DROID',
-        },
-      ],
-    })
-    .then((device) => {
-      console.log('Connecting to GATT Service...');
-      progressStep();
-      return device.gatt.connect();
-    })
-    .then((droid) => {
-      console.log('Getting Droid...');
-      progressStep();
-      return droid.getPrimaryService(serviceUuid);
-    })
-    .then((service) => {
-      console.log('Getting Characteristics...');
-      progressStep();
-      return service.getCharacteristics();
-    })
-    .then((characteristics) => {
-      characteristics.forEach((c) => {
-        if (c.uuid === notificationUuid) {
-          return handleNotificationCharacteristic(c);
-        } else if (c.uuid === writeUuid) {
-          writeC = c;
-          return initialWrites().catch(error => console.log(error));
-        }
+async function writeHex(hex) {
+  const data = fromHexString(hex);
+  if (writeC.properties.writeWithoutResponse) {
+    await writeC.writeValueWithoutResponse(data);
+  } else {
+    await writeC.writeValue(data);
+  }
+}
+
+document.getElementById('connect-button').addEventListener('click', async function () {
+  try {
+    // Prefer a name filter when possible; fall back to acceptAllDevices for
+    // browsers that no longer surface the DROID advertisement reliably.
+    let device;
+    try {
+      device = await navigator.bluetooth.requestDevice({
+        optionalServices: [serviceUuid],
+        filters: [{ name: 'DROID' }],
       });
-    })
-    .catch((error) => {
-      console.log('Argh! ' + error);
-      clearProgress()
-      setErrorText()
-    });
+    } catch (filterError) {
+      console.log('Name filter failed, falling back to acceptAllDevices:', filterError);
+      device = await navigator.bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: [serviceUuid],
+      });
+    }
+
+    console.log('Connecting to GATT Service...');
+    progressStep();
+    const server = await device.gatt.connect();
+
+    console.log('Getting Droid...');
+    progressStep();
+    const service = await server.getPrimaryService(serviceUuid);
+
+    console.log('Getting Characteristics...');
+    progressStep();
+    const characteristics = await service.getCharacteristics();
+
+    const notifyChar = characteristics.find((c) => c.uuid === notificationUuid);
+    const writeChar = characteristics.find((c) => c.uuid === writeUuid);
+
+    if (notifyChar) {
+      await handleNotificationCharacteristic(notifyChar);
+    }
+
+    if (writeChar) {
+      writeC = writeChar;
+      await initialWrites();
+    } else {
+      throw new Error('Write characteristic not found');
+    }
+  } catch (error) {
+    console.log('Argh! ' + error);
+    clearProgress();
+    setErrorText();
+  }
 });
 
 async function initialWrites() {
   await sleep(1500);
-  await writeC.writeValue(fromHexString('222001'));
+  await writeHex('222001');
   await sleep(1500);
-  await writeC.writeValue(fromHexString('222001'));
+  await writeHex('222001');
   await sleep(1500);
-  await writeC.writeValue(fromHexString('222001'));
+  await writeHex('222001');
   await sleep(1500);
-  await writeC.writeValue(fromHexString('222001'));
+  await writeHex('222001');
   await sleep(1500);
-  await writeC.writeValue(fromHexString('27420f4444001f00'));
+  await writeHex('27420f4444001f00');
   await sleep(1500);
-  await writeC.writeValue(fromHexString('27420f4444001802'));
+  await writeHex('27420f4444001802');
   await sleep(1500);
-  await writeC.writeValue(fromHexString('27420f4444001f00'));
+  await writeHex('27420f4444001f00');
   await sleep(1500);
-  await writeC.writeValue(fromHexString('27420f4444001802'));
+  await writeHex('27420f4444001802');
   await sleep(2000);
   return writeC;
 }
+
 async function handleNotificationCharacteristic(c) {
   c = await c.startNotifications();
   return c.addEventListener(
@@ -93,15 +111,13 @@ function handleCharacteristicValueChanged(event) {
 }
 
 var time = Math.random();
-// var red = document.querySelector('#red');
-// red.style.setProperty('--animation-time', time +'s');
 
 function progressStep() {
   currentStep++;
   clearErrorText();
   if (document.getElementsByClassName('status-light')[currentStep]) {
     const currentStepItem = document.getElementsByClassName('status-light')[currentStep];
-    currentStepItem.classList.add("status-light-active");
+    currentStepItem.classList.add('status-light-active');
     currentStepItem.style.setProperty('--animation-time', time + 's');
   }
 }
@@ -116,9 +132,9 @@ function clearProgress() {
 }
 
 function setErrorText() {
-  document.getElementById("error-text").textContent = "Error connecting to droid...";
+  document.getElementById('error-text').textContent = 'Error connecting to droid...';
 }
 
 function clearErrorText() {
-  document.getElementById("error-text").textContent = "";
+  document.getElementById('error-text').textContent = '';
 }
